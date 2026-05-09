@@ -1,0 +1,488 @@
+# =============================================================================
+# DeepSeek TUI / CLI 配置文件
+# 建议保存到: ~/.deepseek/config.toml
+#
+# 适用场景:
+# 1. 中国区日常使用
+# 2. 官方 DeepSeek 平台
+# 3. 保持稳定优先，不默认启用 beta
+#
+# 说明:
+# - 最新版本下，中国区不再要求必须使用 deepseek-cn / api.deepseeki.com
+# - 推荐直接使用官方地址: https://api.deepseek.com
+# - 如果你后续想体验 beta 特性，可把 base_url 改为:
+#   https://api.deepseek.com/beta
+# =============================================================================
+
+# =============================================================================
+# 一、基础连接配置
+# =============================================================================
+
+# 默认服务商。
+# 这里使用官方 DeepSeek。
+provider = "deepseek"
+
+# 你的 DeepSeek API Key。
+# 必须替换为真实值，否则无法调用。
+api_key = "YOUR_DEEPSEEK_API_KEY"
+
+# 官方推荐稳定地址。
+# 如果你想用稳定版，就保持这个值。
+base_url = "https://api.deepseek.com"
+
+# 默认文本模型。
+# 可选:
+# - deepseek-v4-pro   : 更强的推理与代码能力，适合复杂任务
+# - deepseek-v4-flash : 更快、更便宜，适合高频交互
+default_text_model = "deepseek-v4-pro"
+
+# 推理强度 / 思考深度。
+# 可选:
+# - off
+# - low
+# - medium
+# - high
+# - max
+#
+# 建议:
+# - 日常稳定使用: high
+# - 极致深推理: max
+reasoning_effort = "high"
+
+# 费用显示币种，只影响界面显示，不影响实际计费。
+# 可选: usd | cny
+cost_currency = "cny"
+
+# 可选的自定义 HTTP 请求头。
+# 一般官方 DeepSeek 不需要。
+# 如果你接入某些 OpenAI 兼容网关，可能会用到。
+# http_headers = { "X-Model-Provider-Id" = "your-model-provider" }
+
+# =============================================================================
+# 二、常用本地路径
+# =============================================================================
+
+# 社区技能目录。
+skills_dir = "~/.deepseek/skills"
+
+# MCP 配置文件路径。
+mcp_config_path = "~/.deepseek/mcp.json"
+
+# 普通笔记文件。
+notes_path = "~/.deepseek/notes.txt"
+
+# 持久记忆文件。
+memory_path = "~/.deepseek/memory.md"
+
+# 额外系统指令文件，可选。
+# 适合放全局规则、个人偏好、团队规范。
+#
+# 注意:
+# - 路径支持 ~ 和环境变量
+# - 项目级 .deepseek/config.toml 中的 instructions 会整体替换这里
+#
+# instructions = [
+#   "~/.deepseek/global.md",
+#   "./AGENTS.md"
+# ]
+
+# =============================================================================
+# 三、用户记忆功能
+# =============================================================================
+[memory]
+
+# 是否启用“持久记忆”能力。
+# 开启后，系统会读取 memory_path，并把内容注入到提示词中。
+# 如果你暂时只想要纯净会话，保持 false。
+enabled = false
+
+# 预留字段，当前版本通常无需配置。
+# tools_file = "./tools.json"
+
+# =============================================================================
+# 四、安全与执行策略
+# =============================================================================
+
+# 是否允许调用 shell。
+# 如果你希望 AI 可以执行命令、查看文件、跑构建，通常设为 true。
+# 如果你只想让它聊天和分析，设为 false。
+allow_shell = true
+
+# 审批策略。
+# 可选:
+# - on-request : 按需确认，最适合大多数人
+# - untrusted  : 更严格
+# - never      : 不弹审批，风险最高
+approval_policy = "on-request"
+
+# 沙箱模式。
+# 可选:
+# - read-only          : 只读，最安全
+# - workspace-write    : 可写当前项目，推荐开发使用
+# - danger-full-access : 全权限，高风险
+# - external-sandbox   : 外部沙箱后端
+sandbox_mode = "workspace-write"
+
+# 最大子代理并发数。
+# 允许范围通常是 1..20。
+# 对大多数个人开发机，8 或 10 比较合适。
+max_subagents = 8
+
+# 自动放行命令前缀，可选。
+# 示例:
+# auto_allow = ["git status", "cargo check", "npm run"]
+#
+# 注意:
+# - 这里按“命令前缀”匹配，不是整行精确匹配
+# auto_allow = []
+
+# =============================================================================
+# 五、网络策略（可选）
+# =============================================================================
+#
+# 默认不写 [network] 时，不强制域名白名单/黑名单。
+# 如果你想限制 fetch_url / web_search / MCP HTTP 的外部访问，可启用。
+#
+# [network]
+#
+# 未命中 allow / deny 时的默认动作:
+# - allow
+# - deny
+# - prompt
+# default = "prompt"
+#
+# 允许访问的域名。
+# allow = [
+#   "api.deepseek.com",
+#   "github.com",
+#   ".githubusercontent.com"
+# ]
+#
+# 拒绝访问的域名。
+# deny = []
+#
+# 是否记录审计日志。
+# audit = true
+
+# =============================================================================
+# 六、技能安装器（可选）
+# =============================================================================
+#
+# [skills]
+# 社区技能索引地址。
+# registry_url = "https://raw.githubusercontent.com/Hmbown/deepseek-skills/main/index.json"
+#
+# 单个技能解压后的最大体积，默认约 5 MiB。
+# max_install_size_bytes = 5_242_880
+
+# =============================================================================
+# 七、TUI 界面配置
+# =============================================================================
+[tui]
+
+# 是否使用备用屏幕。
+# 可选:
+# - auto
+# - always
+# - never
+alternate_screen = "auto"
+
+# 是否启用鼠标捕获。
+# 一般保持 true 即可。
+mouse_capture = true
+
+# 终端探测超时时间，单位毫秒。
+terminal_probe_timeout_ms = 500
+
+# 是否启用 OSC 8 链接。
+# 在 iTerm2 / Ghostty / WezTerm / macOS 新版 Terminal 中通常很好用。
+osc8_links = true
+
+# 界面语言，可选:
+# - auto
+# - en
+# - ja
+# - zh-Hans
+# - pt-BR
+locale = "zh-Hans"
+
+# 覆盖通知行为，可选:
+# - always
+# - never
+# 不写则使用 [notifications] 的阈值逻辑。
+# notification_condition = "always"
+
+# =============================================================================
+# 八、功能开关
+# =============================================================================
+[features]
+
+# Shell 工具能力
+shell_tool = true
+
+# 子代理能力
+subagents = true
+
+# 网络搜索能力
+web_search = true
+
+# 补丁编辑能力
+apply_patch = true
+
+# MCP 能力
+mcp = true
+
+# 执行策略能力
+exec_policy = true
+
+# =============================================================================
+# 九、重试机制
+# =============================================================================
+[retry]
+
+# 是否启用失败重试
+enabled = true
+
+# 最大重试次数
+max_retries = 3
+
+# 初始延迟，单位秒
+initial_delay = 1.0
+
+# 最大延迟，单位秒
+max_delay = 30.0
+
+# 指数退避底数
+exponential_base = 2.0
+
+# =============================================================================
+# 十、上下文压缩 / 缝合（实验性，建议先关闭）
+# =============================================================================
+[context]
+
+# 是否启用上下文缝合/压缩
+enabled = false
+
+# 保留的原文窗口回合数
+verbatim_window_turns = 16
+
+# 分级阈值（一般无需改）
+l1_threshold = 192000
+l2_threshold = 384000
+l3_threshold = 576000
+
+# 周期阈值（一般无需改）
+cycle_threshold = 768000
+
+# 缝合用模型
+seam_model = "deepseek-v4-flash"
+
+# =============================================================================
+# 十一、容量控制器（高级保护，默认关闭）
+# =============================================================================
+[capacity]
+
+# 是否启用运行时容量护栏
+enabled = false
+
+# 以下参数通常保留默认即可
+low_risk_max = 0.50
+medium_risk_max = 0.62
+severe_min_slack = -0.25
+severe_violation_ratio = 0.40
+refresh_cooldown_turns = 6
+replan_cooldown_turns = 5
+max_replay_per_turn = 1
+min_turns_before_guardrail = 4
+profile_window = 8
+deepseek_v3_2_chat_prior = 3.9
+deepseek_v3_2_reasoner_prior = 4.1
+deepseek_v4_pro_prior = 3.5
+deepseek_v4_flash_prior = 4.2
+fallback_default_prior = 3.8
+
+# =============================================================================
+# 十二、通知
+# =============================================================================
+[notifications]
+
+# 通知方式，可选:
+# - auto
+# - osc9
+# - bel
+# - off
+#
+# auto 在 macOS 通常是合理选择。
+method = "auto"
+
+# 只有当一次回合成功完成且耗时超过该秒数时才通知
+threshold_secs = 30
+
+# 通知中是否包含摘要（耗时 / 成本等）
+include_summary = false
+
+# =============================================================================
+# 十三、工作区快照（可选，推荐开启）
+# =============================================================================
+[snapshots]
+
+# 是否启用工作区快照。
+# 每轮操作前后会保存快照，便于回滚。
+enabled = true
+
+# 快照保留天数
+max_age_days = 7
+
+# =============================================================================
+# 十四、LSP 诊断（推荐开启）
+# =============================================================================
+[lsp]
+
+# 是否启用编辑后 LSP 诊断
+enabled = true
+
+# 编辑后等待 LSP 反馈的毫秒数
+poll_after_edit_ms = 5000
+
+# 每个文件最多注入多少条诊断
+max_diagnostics_per_file = 20
+
+# 是否包含 warning
+include_warnings = false
+
+# 如果你想自定义语言服务器命令，可在这里覆盖
+# [lsp.servers]
+# rust = ["rust-analyzer"]
+# go = ["gopls", "serve"]
+# python = ["pyright-langserver", "--stdio"]
+
+# =============================================================================
+# 十五、Hooks（可选）
+# =============================================================================
+#
+# [hooks]
+# enabled = true
+# default_timeout_secs = 30
+#
+# [[hooks.hooks]]
+# event = "session_start"
+# command = "echo 'DeepSeek session started'"
+#
+# shell_env 钩子可用于在每次 shell 调用前注入临时环境变量
+# [[hooks.hooks]]
+# name = "aws-creds"
+# event = "shell_env"
+# command = "aws-vault export my-profile --format=env"
+
+# =============================================================================
+# 十六、运行时 API（本地 HTTP/SSE 服务，可选）
+# =============================================================================
+#
+# [runtime_api]
+# cors_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
+# =============================================================================
+# 十七、Provider 专属配置
+# =============================================================================
+#
+# 建议:
+# - 如果你只用 DeepSeek，顶层 api_key/base_url 已经够用
+# - 如果你未来会混用多个 provider，建议把各家配置都写在这里
+#
+# 官方 DeepSeek
+[providers.deepseek]
+# api_key = "YOUR_DEEPSEEK_API_KEY"
+# base_url = "https://api.deepseek.com"
+# model = "deepseek-v4-pro"
+
+# NVIDIA NIM
+[providers.nvidia_nim]
+# api_key = "YOUR_NVIDIA_API_KEY"
+# base_url = "https://integrate.api.nvidia.com/v1"
+# model = "deepseek-ai/deepseek-v4-pro"
+
+# OpenRouter
+[providers.openrouter]
+# api_key = "YOUR_OPENROUTER_API_KEY"
+# base_url = "https://openrouter.ai/api/v1"
+# model = "deepseek/deepseek-v4-pro"
+
+# Novita
+[providers.novita]
+# api_key = "YOUR_NOVITA_API_KEY"
+# base_url = "https://api.novita.ai/v1"
+# model = "deepseek/deepseek-v4-pro"
+
+# Fireworks
+[providers.fireworks]
+# api_key = "YOUR_FIREWORKS_API_KEY"
+# base_url = "https://api.fireworks.ai/inference/v1"
+# model = "accounts/fireworks/models/deepseek-v4-pro"
+
+# SGLang（自托管）
+[providers.sglang]
+# api_key = "OPTIONAL_SGLANG_TOKEN"
+# base_url = "http://localhost:30000/v1"
+# model = "deepseek-ai/DeepSeek-V4-Pro"
+
+# vLLM（自托管）
+[providers.vllm]
+# api_key = "OPTIONAL_VLLM_TOKEN"
+# base_url = "http://localhost:8000/v1"
+# model = "deepseek-ai/DeepSeek-V4-Pro"
+
+# Ollama（本地模型）
+[providers.ollama]
+# api_key = "OPTIONAL_OLLAMA_TOKEN"
+# base_url = "http://localhost:11434/v1"
+# model = "qwen2.5-coder:7b"
+
+# =============================================================================
+# 十八、Profiles：多环境切换
+# =============================================================================
+#
+# 使用方式:
+# deepseek --profile pro
+# deepseek --profile flash
+#
+# 建议:
+# - pro   用于复杂任务、代码重构、架构分析
+# - flash 用于高频问答、轻量编码、成本优先
+#
+
+[profiles.pro]
+provider = "deepseek"
+api_key = "YOUR_DEEPSEEK_API_KEY"
+base_url = "https://api.deepseek.com"
+default_text_model = "deepseek-v4-pro"
+reasoning_effort = "high"
+cost_currency = "cny"
+allow_shell = true
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.flash]
+provider = "deepseek"
+api_key = "YOUR_DEEPSEEK_API_KEY"
+base_url = "https://api.deepseek.com"
+default_text_model = "deepseek-v4-flash"
+reasoning_effort = "high"
+cost_currency = "cny"
+allow_shell = true
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# =============================================================================
+# 十九、开发 / 保守模式示例（可选）
+# =============================================================================
+
+[profiles.safe]
+provider = "deepseek"
+api_key = "YOUR_DEEPSEEK_API_KEY"
+base_url = "https://api.deepseek.com"
+default_text_model = "deepseek-v4-pro"
+reasoning_effort = "high"
+cost_currency = "cny"
+allow_shell = false
+approval_policy = "on-request"
+sandbox_mode = "read-only"
